@@ -2,51 +2,67 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Personal;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
-class PersonalController extends Controller
+class UserController extends Controller
 {
-    // Listar todos los registros
+    // Listar todos los usuarios
     public function index()
     {
-        return Personal::all();
+        return User::all();
     }
 
-    // Crear un nuevo registro
+    // Crear un usuario nuevo
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'email' => 'required|email|unique:personals,email',
-            'telefono' => 'nullable|string|max:20',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
         ]);
 
-        $personal = Personal::create($request->all());
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
-        return response()->json($personal, 201);
+        return response()->json($user, 201);
     }
 
-    // Mostrar un registro específico
+    // Mostrar un usuario específico
     public function show($id)
     {
-        return Personal::findOrFail($id);
+        return User::findOrFail($id);
     }
 
-    // Actualizar un registro
+    // Actualizar usuario
     public function update(Request $request, $id)
     {
-        $personal = Personal::findOrFail($id);
-        $personal->update($request->all());
+        $user = User::findOrFail($id);
 
-        return response()->json($personal, 200);
+        $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => "sometimes|email|unique:users,email,$id",
+            'password' => 'sometimes|string|min:6',
+        ]);
+
+        $user->update([
+            'name' => $request->name ?? $user->name,
+            'email' => $request->email ?? $user->email,
+            'password' => $request->password ? Hash::make($request->password) : $user->password,
+        ]);
+
+        return response()->json($user, 200);
     }
 
-    // Eliminar un registro
+    // Eliminar un usuario
     public function destroy($id)
     {
-        $personal = Personal::findOrFail($id);
-        $personal->delete();
+        $user = User::findOrFail($id);
+        $user->delete();
 
         return response()->json(null, 204);
     }

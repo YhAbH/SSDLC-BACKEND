@@ -2,8 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\PersonalController;
 
 // Rutas públicas
 Route::post('/login', [AuthController::class, 'login']);
@@ -19,6 +19,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/reports', [ReportController::class, 'store']);
     Route::patch('/reports/{id}', [ReportController::class, 'updateStatus']);
 
-    // Personals (CRUD viejo, si ya no lo usas puedes eliminarlo)
-    Route::apiResource('personals', PersonalController::class);
+    // Users
+    Route::apiResource('users', UserController::class);
 });
