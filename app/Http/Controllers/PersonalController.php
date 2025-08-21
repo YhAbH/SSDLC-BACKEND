@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class UserController extends Controller
+class PersonalController extends Controller
 {
     // Listar todos los usuarios
     public function index()
@@ -65,5 +65,11 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(null, 204);
+    }
+
+    // Devuelve el usuario autenticado
+    public function me(Request $request)
+    {
+        return response()->json($request->user(), 200);
     }
 }

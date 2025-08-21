@@ -1,8 +1,7 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\ReportController;
 
 // Rutas públicas
@@ -12,13 +11,15 @@ Route::post('/register', [AuthController::class, 'register']);
 // Rutas protegidas con Sanctum
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', fn() => auth()->user());
+
+    // Usuario autenticado
+    Route::get('/user', [PersonalController::class, 'me']);
 
     // Reports
     Route::get('/reports', [ReportController::class, 'index']);
     Route::post('/reports', [ReportController::class, 'store']);
     Route::patch('/reports/{id}', [ReportController::class, 'updateStatus']);
 
-    // Users
-    Route::apiResource('users', UserController::class);
+    // Users CRUD
+    Route::apiResource('users', PersonalController::class);
 });
